@@ -16,7 +16,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login']]);
+      //  $this->middleware('auth:api', ['except' => ['login']]);
     }
 
     /**
@@ -29,7 +29,7 @@ class AuthController extends Controller
         $credentials = request(['email', 'password']);
 
         if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Failed to connect'], 401);
         }
 
         return $this->respondWithToken($token);
@@ -87,10 +87,11 @@ class AuthController extends Controller
         $valodator = $request->validate([
             'name'=>'required',
              'email'=>'required|email|unique:users',
-             'password'=>'required|confirmed'
+             'password'=>'required',
+             'confirm'=>'required|same:password'
         ]);
 
-       $userData= User::create($request->all);
+       $userData= User::create($request->except('confirm'));
         return response()->json([
             'message'=>'succeed',
             "user"=>$userData
