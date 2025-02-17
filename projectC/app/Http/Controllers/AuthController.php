@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Enums\UserRole;
 
 use Validator;
 use App\Models\User;
@@ -91,7 +92,14 @@ class AuthController extends Controller
              'confirm'=>'required|same:password'
         ]);
 
-       $userData= User::create($request->except('confirm'));
+       $userData= User::create([
+        'name'=>$valodator['name'],
+        'email'=>$valodator['email'],
+        'password'=>$valodator['password'],
+        'role'=>UserRole::ADMIN,
+       ]);
+
+
         return response()->json([
             'message'=>'succeed',
             "user"=>$userData

@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\StudentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,22 +15,21 @@ use App\Http\Controllers\AuthController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+ 
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
 Route::group([
 
-    'middleware' => 'api'
+    'middleware' => ['jwt.auth','role:admin'],
 
 ], function ($router) {
-
-  //  Route::post('logout', [AuthController::class, '']);
-  //  Route::post('refresh', 'AuthController@refresh');
- //   Route::post('me', 'AuthController@me');
+    
+  Route::post('add',[StudentController::class, 'addStudent']);
+  Route::put('update',[StudentController::class, 'updateStudent']);
+  Route::delete('delete',[StudentController::class, 'deleteStudent']);
+  Route::get('getone',[StudentController::class, 'getStudent']);
+  Route::get('getall',[StudentController::class, 'getAll']);
 
 });

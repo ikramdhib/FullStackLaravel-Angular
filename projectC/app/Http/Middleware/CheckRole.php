@@ -4,8 +4,9 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
-class CORS
+class CheckRole
 {
     /**
      * Handle an incoming request.
@@ -14,11 +15,13 @@ class CORS
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next, ...$roles)
     {
-        header ('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS');
-        header ('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token, Authoriation, Accept, charset, boundary, Content-Length');
-        header ('Access-Control-Allow-Origin: *');
+        $user = Auth::user();
+        if(!$user || !in_array($user->role, $roles)){
+            
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
         return $next($request);
     }
 }
